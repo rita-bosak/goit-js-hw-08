@@ -85,3 +85,24 @@ const galleryItemsMarkup = galleryItems.map(item =>
 const gallery = document.querySelector('.js-gallery');
 
 gallery.insertAdjacentHTML("afterbegin", galleryItemsMarkup);
+
+
+function onGalleryItemsClick(evt) {
+  evt.preventDefault();
+  if(!evt.target.classList.contains('.gallery__image')) {
+    return
+  } 
+
+  const lightbox = document.querySelector('.js-lightbox')
+  lightbox.classList.add('is-open')
+
+  // const lightboxImage = document.querySelector('.lightbox__image')
+  // galleryItems.
+  // lightboxImage.src = galleryItems.original
+  // lightboxImage.alt = galleryItems.description
+  
+  console.log('target:', evt.target)
+  
+}
+
+gallery.addEventListener('click', onGalleryItemsClick);

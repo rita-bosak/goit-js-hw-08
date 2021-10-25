@@ -1,3 +1,5 @@
+'use strict'
+
 const galleryItems = [
   {
     preview:
@@ -63,3 +65,23 @@ const galleryItems = [
     description: 'Lighthouse Coast Sea',
   },
 ];
+
+const galleryItemsMarkup = galleryItems.map(item => 
+  `<li class="gallery__item">
+    <a 
+      class="gallery__link" 
+      href="${item.preview}"
+    >
+      <img 
+        class="gallery__image"
+        src="${item.preview}"
+        data-source="${item.preview}"
+        alt="${item.description}"
+      />
+    </a>
+  </li>`
+).join('');
+
+const gallery = document.querySelector('.js-gallery');
+
+gallery.insertAdjacentHTML("afterbegin", galleryItemsMarkup);

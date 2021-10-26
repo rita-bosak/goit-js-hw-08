@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 const galleryItems = [
   {
@@ -66,8 +66,10 @@ const galleryItems = [
   },
 ];
 
-const galleryItemsMarkup = galleryItems.map(item => 
-  `<li class="gallery__item">
+const galleryItemsMarkup = galleryItems
+  .map(
+    (item) =>
+      `<li class="gallery__item">
     <a 
       class="gallery__link" 
       href="${item.preview}"
@@ -80,29 +82,42 @@ const galleryItemsMarkup = galleryItems.map(item =>
       />
     </a>
   </li>`
-).join('');
+  )
+  .join('');
 
 const gallery = document.querySelector('.js-gallery');
 
-gallery.insertAdjacentHTML("afterbegin", galleryItemsMarkup);
+gallery.insertAdjacentHTML('afterbegin', galleryItemsMarkup);
 
+gallery.addEventListener('click', onGalleryItemsClick);
 
 function onGalleryItemsClick(evt) {
   evt.preventDefault();
-  if(!evt.target.classList.contains('.gallery__image')) {
-    return
-  } 
 
-  const lightbox = document.querySelector('.js-lightbox')
-  lightbox.classList.add('is-open')
+  if (evt.target.nodeName !== 'IMG') {
+    return;
+  }
 
-  // const lightboxImage = document.querySelector('.lightbox__image')
-  // galleryItems.
-  // lightboxImage.src = galleryItems.original
-  // lightboxImage.alt = galleryItems.description
-  
-  console.log('target:', evt.target)
-  
+  openLightbox();
+
+  const originalImage = getOriginalImage(evt.target, galleryItems);
+
+  const lightboxImage = document.querySelector('.lightbox__image');
+
+  lightboxImage.src = originalImage;
+  lightboxImage.alt = evt.target.alt;
 }
 
-gallery.addEventListener('click', onGalleryItemsClick);
+function openLightbox() {
+  const lightbox = document.querySelector('.js-lightbox');
+
+  lightbox.classList.add('is-open');
+}
+
+function getOriginalImage(target, array) {
+  for (let i = 0; i < array.length; i += 1) {
+    if (target.alt === array[i].description) {
+      return array[i].original;
+    }
+  }
+}

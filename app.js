@@ -66,6 +66,15 @@ const galleryItems = [
   },
 ];
 
+const gallery = document.querySelector('.js-gallery');
+const lightbox = document.querySelector('.js-lightbox');
+const lightboxOpen = document.querySelector('.js-lightbox.is-open');
+const lightboxImage = document.querySelector('.lightbox__image');
+const lightboxCloseBtn = document.querySelector(
+  'button[data-action="close-lightbox"]'
+);
+const lightboxOverlay = document.querySelector('.lightbox__overlay');
+
 const galleryItemsMarkup = galleryItems
   .map(
     (item) =>
@@ -85,8 +94,6 @@ const galleryItemsMarkup = galleryItems
   )
   .join('');
 
-const gallery = document.querySelector('.js-gallery');
-
 gallery.insertAdjacentHTML('afterbegin', galleryItemsMarkup);
 
 gallery.addEventListener('click', onGalleryItemsClick);
@@ -98,20 +105,11 @@ function onGalleryItemsClick(evt) {
     return;
   }
 
-  openLightbox();
-
   const originalImage = getOriginalImage(evt.target, galleryItems);
 
-  const lightboxImage = document.querySelector('.lightbox__image');
-
-  lightboxImage.src = originalImage;
-  lightboxImage.alt = evt.target.alt;
-}
-
-function openLightbox() {
-  const lightbox = document.querySelector('.js-lightbox');
-
   lightbox.classList.add('is-open');
+
+  openLightboxImage(evt.target, originalImage);
 }
 
 function getOriginalImage(target, array) {
@@ -120,4 +118,39 @@ function getOriginalImage(target, array) {
       return array[i].original;
     }
   }
+}
+
+function openLightboxImage(target, image) {
+  lightboxImage.src = image;
+  lightboxImage.alt = target.alt;
+}
+
+lightboxCloseBtn.addEventListener('click', handleLightboxClose);
+lightboxOverlay.addEventListener('click', handleLightboxClose);
+
+function handleLightboxClose() {
+  lightbox.classList.remove('is-open');
+  lightboxImage.src = '';
+}
+
+window.addEventListener('keydown', handleLightboxEscape);
+
+function handleLightboxEscape(evt) {
+  if (evt.key !== 'Escape') {
+    return;
+  }
+  handleLightboxClose();
+}
+
+window.addEventListener('keydown', handleLightboxSlide);
+
+function handleLightboxSlide(evt) {
+  if (
+    !lightbox.classList.contains('.is-open') &&
+    evt.key !== 'ArrowRight' &&
+    evt.key !== 'ArrowLeft'
+  ) {
+    return;
+  }
+  console.log(evt.target);
 }

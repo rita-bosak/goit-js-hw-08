@@ -68,7 +68,6 @@ const galleryItems = [
 
 const gallery = document.querySelector('.js-gallery');
 const lightbox = document.querySelector('.js-lightbox');
-const lightboxOpen = document.querySelector('.js-lightbox.is-open');
 const lightboxImage = document.querySelector('.lightbox__image');
 const lightboxCloseBtn = document.querySelector(
   'button[data-action="close-lightbox"]'
@@ -136,21 +135,85 @@ function handleLightboxClose() {
 window.addEventListener('keydown', handleLightboxEscape);
 
 function handleLightboxEscape(evt) {
-  if (evt.key !== 'Escape') {
+  if (!lightbox.classList.contains('.is-open') && evt.key !== 'Escape') {
     return;
   }
   handleLightboxClose();
 }
 
-window.addEventListener('keydown', handleLightboxSlide);
+window.addEventListener('keydown', handleNextLightboxImage);
 
-function handleLightboxSlide(evt) {
-  if (
-    !lightbox.classList.contains('.is-open') &&
-    evt.key !== 'ArrowRight' &&
-    evt.key !== 'ArrowLeft'
-  ) {
+function handleNextLightboxImage(evt) {
+  if (!lightbox.classList.contains('.is-open') && evt.key !== 'ArrowRight') {
     return;
   }
-  console.log(evt.target);
+
+  const nextLightboxImage = getNextOriginalImage(lightboxImage, galleryItems);
+  const nextLightboxImageDescription = getNextImageDescription(
+    lightboxImage,
+    galleryItems
+  );
+
+  lightboxImage.src = nextLightboxImage;
+  lightboxImage.alt = nextLightboxImageDescription;
+}
+
+function getNextOriginalImage(currentImage, array) {
+  for (let i = 0; i < array.length; i += 1) {
+    if (currentImage.alt === array[array.length - 1].description) {
+      return array[0].original;
+    } else if (currentImage.alt === array[i].description) {
+      return array[i + 1].original;
+    }
+  }
+}
+
+function getNextImageDescription(currentImage, array) {
+  for (let i = 0; i < array.length; i += 1) {
+    if (currentImage.alt === array[array.length - 1].description) {
+      return array[0].description;
+    } else if (currentImage.alt === array[i].description) {
+      return array[i + 1].description;
+    }
+  }
+}
+
+window.addEventListener('keydown', handlePreviousLightboxImage);
+
+function handlePreviousLightboxImage(evt) {
+  if (!lightbox.classList.contains('.is-open') && evt.key !== 'ArrowLeft') {
+    return;
+  }
+
+  const previousLightboxImage = getPreviousOriginalImage(
+    lightboxImage,
+    galleryItems
+  );
+  const previousLightboxImageDescription = getPreviousImageDescription(
+    lightboxImage,
+    galleryItems
+  );
+
+  lightboxImage.src = previousLightboxImage;
+  lightboxImage.alt = previousLightboxImageDescription;
+}
+
+function getPreviousOriginalImage(currentImage, array) {
+  for (let i = 0; i < array.length; i += 1) {
+    if (currentImage.alt === array[0].description) {
+      return array[array.length - 1].original;
+    } else if (currentImage.alt === array[i].description) {
+      return array[i - 1].original;
+    }
+  }
+}
+
+function getPreviousImageDescription(currentImage, array) {
+  for (let i = 0; i < array.length; i += 1) {
+    if (currentImage.alt === array[0].description) {
+      return array[array.length - 1].description;
+    } else if (currentImage.alt === array[i].description) {
+      return array[i - 1].description;
+    }
+  }
 }

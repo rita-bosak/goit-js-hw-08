@@ -67,7 +67,6 @@ const galleryItems = [
 ];
 
 const gallery = document.querySelector('.js-gallery');
-const galleryImage = document.querySelector('.gallery__image');
 const lightbox = document.querySelector('.js-lightbox');
 const lightboxImage = document.querySelector('.lightbox__image');
 const lightboxCloseBtn = document.querySelector(
@@ -113,93 +112,94 @@ function onGalleryItemsClick(evt) {
 
   lightboxImage.src = originalImage;
   lightboxImage.alt = target.alt;
-}
 
-lightboxCloseBtn.addEventListener('click', handleLightboxClose);
-lightboxOverlay.addEventListener('click', handleLightboxClose);
+  lightboxCloseBtn.addEventListener('click', handleLightboxClose);
+  lightboxOverlay.addEventListener('click', handleLightboxClose);
+  window.addEventListener('keydown', handleKeydownLightboxListener);
+}
 
 function handleLightboxClose() {
   lightbox.classList.remove('is-open');
   lightboxImage.src = '';
+
+  lightboxCloseBtn.removeEventListener('click', handleLightboxClose);
+  lightboxOverlay.removeEventListener('click', handleLightboxClose);
+  window.removeEventListener('keydown', handleKeydownLightboxListener);
 }
 
-window.addEventListener('keydown', handleLightboxEscape);
-
-function handleLightboxEscape(evt) {
-  if (!lightbox.classList.contains('.is-open') && evt.key !== 'Escape') {
-    return;
+function handleKeydownLightboxListener(evt) {
+  if (evt.key === 'Escape') {
+    handleLightboxClose();
+  } else if (evt.key === 'ArrowRight') {
+    getNextLightboxImage(lightboxImage);
+  } else if (evt.key === 'ArrowLeft') {
+    getPreviousLightboxImage(lightboxImage);
   }
-  handleLightboxClose();
-}
 
-window.addEventListener('keydown', handleNextLightboxImage);
-
-function handleNextLightboxImage(evt) {
-  if (!lightbox.classList.contains('.is-open') && evt.key !== 'ArrowRight') {
-    return;
-  }
-  getNextLightboxImage(lightboxImage);
+  return;
 }
 
 function getNextLightboxImage(currentImage) {
-  const isCurrentGalleryItem = (item) => item.original === currentImage.src;
+  const currentGalleryImage = gallery.querySelector(
+    `img[data-source = "${currentImage.src}"`
+  );
+  const currentGalleryItem = currentGalleryImage.closest('.gallery__item');
+  const firstGalleryImage = gallery.firstChild.querySelector('.gallery__image');
 
-  const currentIndex = galleryItems.findIndex(isCurrentGalleryItem);
-  const nextIndex = currentIndex + 1;
-  const lastIndex = galleryItems.length - 1;
-
-  if (currentIndex === lastIndex) {
-    currentImage.src = galleryItems[0].original;
-    currentImage.alt = galleryItems[0].alt;
+  if (currentGalleryItem === gallery.lastChild) {
+    currentImage.src = firstGalleryImage.getAttribute('data-source');
+    currentImage.alt = firstGalleryImage.alt;
   } else {
-    currentImage.src = galleryItems[nextIndex].original;
-    currentImage.alt = galleryItems[nextIndex].alt;
+    const nextGalleryImage =
+      currentGalleryItem.nextSibling.querySelector('.gallery__image');
+
+    currentImage.src = nextGalleryImage.getAttribute('data-source');
+    currentImage.alt = nextGalleryImage.alt;
   }
 
-  // const currentGalleryImage = gallery.querySelector(
-  //   `img[data-source = "${currentImage.src}"`
-  // );
-  // const currentGalleryItem = currentGalleryImage.closest('.gallery__item');
+  // const isCurrentGalleryItem = (item) => item.original === currentImage.src;
 
-  // const nextGalleryImage =
-  //   currentGalleryItem.nextSibling.querySelector('.gallery__image');
+  // const currentIndex = galleryItems.findIndex(isCurrentGalleryItem);
+  // const nextIndex = currentIndex + 1;
+  // const lastIndex = galleryItems.length - 1;
 
-  // currentImage.src = nextGalleryImage.getAttribute('data-source');
-  // currentImage.alt = nextGalleryImage.alt;
-}
-
-window.addEventListener('keydown', handlePreviousLightboxImage);
-
-function handlePreviousLightboxImage(evt) {
-  if (!lightbox.classList.contains('.is-open') && evt.key !== 'ArrowLeft') {
-    return;
-  }
-  getPreviousLightboxImage(lightboxImage);
+  // if (currentIndex === lastIndex) {
+  //   currentImage.src = galleryItems[0].original;
+  //   currentImage.alt = galleryItems[0].alt;
+  // } else {
+  //   currentImage.src = galleryItems[nextIndex].original;
+  //   currentImage.alt = galleryItems[nextIndex].alt;
+  // }
 }
 
 function getPreviousLightboxImage(currentImage) {
-  const isCurrentGalleryItem = (item) => item.original === currentImage.src;
+  const currentGalleryImage = gallery.querySelector(
+    `img[data-source = "${currentImage.src}"`
+  );
+  const currentGalleryItem = currentGalleryImage.closest('.gallery__item');
+  const lastImage = gallery.lastChild.querySelector('.gallery__image');
 
-  const currentIndex = galleryItems.findIndex(isCurrentGalleryItem);
-  const previousIndex = currentIndex - 1;
-  const lastIndex = galleryItems.length - 1;
-
-  if (currentIndex === 0) {
-    currentImage.src = galleryItems[lastIndex].original;
-    currentImage.alt = galleryItems[lastIndex].alt;
+  if (currentGalleryItem === gallery.firstChild) {
+    currentImage.src = lastImage.getAttribute('data-source');
+    currentImage.alt = lastImage.alt;
   } else {
-    currentImage.src = galleryItems[previousIndex].original;
-    currentImage.alt = galleryItems[previousIndex].alt;
+    const previousGalleryImage =
+      currentGalleryItem.previousSibling.querySelector('.gallery__image');
+
+    currentImage.src = previousGalleryImage.getAttribute('data-source');
+    currentImage.alt = previousGalleryImage.alt;
   }
-  // const currentGalleryImage = gallery.querySelector(
-  //   `img[data-source = "${currentImage.src}"`
-  // );
+  // const isCurrentGalleryItem = (item) => item.original === currentImage.src;
 
-  // const currentGalleryItem = currentGalleryImage.closest('.gallery__item');
+  // const currentIndex = galleryItems.findIndex(isCurrentGalleryItem);
+  // const previousIndex = currentIndex - 1;
+  // const lastIndex = galleryItems.length - 1;
 
-  // const previousGalleryImage =
-  //   currentGalleryItem.previousSibling.querySelector('.gallery__image');
-
-  // currentImage.src = previousGalleryImage.getAttribute('data-source');
-  // currentImage.alt = previousGalleryImage.alt;
+  // if (currentIndex === 0) {
+  //   currentImage.src = galleryItems[lastIndex].original;
+  //   currentImage.alt = galleryItems[lastIndex].alt;
+  // } else {
+  //   currentImage.src = galleryItems[previousIndex].original;
+  //   currentImage.alt = galleryItems[previousIndex].alt;
+  // }
 }

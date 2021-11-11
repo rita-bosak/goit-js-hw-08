@@ -78,11 +78,11 @@ const galleryItemsMarkup = galleryItems
   .map(
     (item) =>
       `<li class="gallery__item">
-    <a 
-      class="gallery__link" 
+    <a
+      class="gallery__link"
       href="${item.preview}"
     >
-      <img 
+      <img
         class="gallery__image"
         src="${item.preview}"
         data-source="${item.original}"

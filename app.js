@@ -121,8 +121,6 @@ function onGalleryItemsClick(evt) {
 function handleLightboxClose() {
   lightbox.classList.remove('is-open');
   lightboxImage.src = '';
-
-  window.removeEventListener('keydown', handleKeydownLightboxListener);
 }
 
 function handleKeydownLightboxListener(evt) {
